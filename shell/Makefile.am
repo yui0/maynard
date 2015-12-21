@@ -1,7 +1,11 @@
 libexec_PROGRAMS = maynard
 
-AM_CFLAGS = $(GCC_CFLAGS)
+AM_CFLAGS = $(GCC_CFLAGS) -I/usr/include/gnome-desktop-3.0 -I/usr/include/gsettings-desktop-schemas -I/usr/include/gnome-menus-3.0/
 AM_CPPFLAGS = $(CLIENT_CFLAGS) $(GTK_CFLAGS)
+
+#pkg-config --libs gnome-desktop-3.0
+#pkg-config --libs libgnome-menu-3.0
+#pkg-config --libs alsa
 
 maynard_SOURCES =				\
 	maynard.c				\
@@ -25,7 +29,7 @@ maynard_SOURCES =				\
 	desktop-shell-protocol.c		\
 	shell-helper-client-protocol.h		\
 	shell-helper-protocol.c
-maynard_LDADD = $(GTK_LIBS) -lm
+maynard_LDADD = $(GTK_LIBS) -lm -lwayland-client -lgnome-desktop-3 -lgtk-3 -lgdk-3 -lpangocairo-1.0 -lpango-1.0 -latk-1.0 -lcairo-gobject -lcairo -lgdk_pixbuf-2.0 -lgio-2.0 -lgobject-2.0 -lglib-2.0 -lgnome-menu-3 -lgio-2.0 -lgobject-2.0 -lglib-2.0 -lasound
 
 BUILT_SOURCES =					\
 	desktop-shell-client-protocol.h		\

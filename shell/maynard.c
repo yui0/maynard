@@ -42,7 +42,7 @@
 
 extern char **environ; /* defined by libc */
 
-#define DEFAULT_BACKGROUND "/usr/share/wallpapers/Hanami/contents/images/3872x2592.jpg"
+#define DEFAULT_BACKGROUND "/usr/share/wallpapers/berry.jpg"
 
 struct element {
   GtkWidget *window;
@@ -117,6 +117,7 @@ desktop_shell_configure (void *data,
   int window_height;
   int grid_width, grid_height;
 
+printf("desktop_shell_configure\n");
   gtk_widget_set_size_request (desktop->background->window,
       width, height);
 
@@ -164,12 +165,97 @@ desktop_shell_grab_cursor (void *data,
     struct desktop_shell *desktop_shell,
     uint32_t cursor)
 {
+	/*struct desktop *desktop = data;
+
+	switch (cursor) {
+	case DESKTOP_SHELL_CURSOR_NONE:
+		desktop->grab_cursor = CURSOR_BLANK;
+		break;
+	case DESKTOP_SHELL_CURSOR_BUSY:
+		desktop->grab_cursor = CURSOR_WATCH;
+		break;
+	case DESKTOP_SHELL_CURSOR_MOVE:
+		desktop->grab_cursor = CURSOR_DRAGGING;
+		break;
+	case DESKTOP_SHELL_CURSOR_RESIZE_TOP:
+		desktop->grab_cursor = CURSOR_TOP;
+		break;
+	case DESKTOP_SHELL_CURSOR_RESIZE_BOTTOM:
+		desktop->grab_cursor = CURSOR_BOTTOM;
+		break;
+	case DESKTOP_SHELL_CURSOR_RESIZE_LEFT:
+		desktop->grab_cursor = CURSOR_LEFT;
+		break;
+	case DESKTOP_SHELL_CURSOR_RESIZE_RIGHT:
+		desktop->grab_cursor = CURSOR_RIGHT;
+		break;
+	case DESKTOP_SHELL_CURSOR_RESIZE_TOP_LEFT:
+		desktop->grab_cursor = CURSOR_TOP_LEFT;
+		break;
+	case DESKTOP_SHELL_CURSOR_RESIZE_TOP_RIGHT:
+		desktop->grab_cursor = CURSOR_TOP_RIGHT;
+		break;
+	case DESKTOP_SHELL_CURSOR_RESIZE_BOTTOM_LEFT:
+		desktop->grab_cursor = CURSOR_BOTTOM_LEFT;
+		break;
+	case DESKTOP_SHELL_CURSOR_RESIZE_BOTTOM_RIGHT:
+		desktop->grab_cursor = CURSOR_BOTTOM_RIGHT;
+		break;
+	case DESKTOP_SHELL_CURSOR_ARROW:
+	default:
+		desktop->grab_cursor = CURSOR_LEFT_PTR;
+	}*/
+}
+
+static void
+desktop_shell_map(void *data, struct desktop_shell *desktop_shell, unsigned int id, const char *name)
+{
+	/* receive request from the compositor, map the window to the taskbar */
+
+/*	struct desktop *desktop = data;
+	struct output *output;
+
+	wl_list_for_each(output, &desktop->outputs, link) {
+		if (output->taskbar && output->taskbar->painted) {
+			taskbar_add_button (output->taskbar, id, name);
+			window_schedule_resize(output->taskbar->window, 1000, 32);
+		}
+	}*/
+	printf("desktop_shell_map [%s]\n", name);
+g_message("desktop_shell_map [%s]\n", name);
+}
+
+static void
+desktop_shell_unmap(void *data, struct desktop_shell *desktop_shell, unsigned int id, const char *name)
+{
+	/* receive request from the compositor, unmap the window from the taskbar */
+
+/*	struct desktop *desktop = data;
+	struct output *output;
+
+	struct taskbar_button *button;
+	struct taskbar_button *tmp;
+
+	wl_list_for_each(output, &desktop->outputs, link) {
+		if (output->taskbar && output->taskbar->painted) {		
+			wl_list_for_each_safe(button, tmp, &output->taskbar->button_list, link) {
+				if (button->id == id) {
+					taskbar_destroy_button (button);
+					window_schedule_resize(output->taskbar->window, 1000, 32);
+				}
+			}
+
+		}
+	}*/
+	printf("desktop_shell_unmap [%s]\n", name);
 }
 
 static const struct desktop_shell_listener shell_listener = {
-  desktop_shell_configure,
-  desktop_shell_prepare_lock_surface,
-  desktop_shell_grab_cursor
+	desktop_shell_configure,
+	desktop_shell_prepare_lock_surface,
+	desktop_shell_grab_cursor,
+	/*desktop_shell_map,
+	desktop_shell_unmap*/
 };
 
 static void
@@ -326,13 +412,13 @@ panel_window_enter_cb (GtkWidget *widget,
     {
       g_source_remove (desktop->hide_panel_idle_id);
       desktop->hide_panel_idle_id = 0;
-      return;
+      return TRUE;
     }
 
   if (desktop->pointer_out_of_panel)
     {
       desktop->pointer_out_of_panel = FALSE;
-      return;
+      return TRUE;
     }
 
   shell_helper_slide_surface_back (desktop->helper,
@@ -388,12 +474,12 @@ panel_window_leave_cb (GtkWidget *widget,
     }
 
   if (desktop->hide_panel_idle_id > 0)
-    return;
+    return TRUE;
 
   if (desktop->grid_visible)
     {
       desktop->pointer_out_of_panel = TRUE;
-      return;
+      return TRUE;
     }
 
   desktop->hide_panel_idle_id = g_idle_add (leave_panel_idle_cb, desktop);
@@ -551,6 +637,7 @@ background_create (struct desktop *desktop)
   gdk_wayland_window_set_use_custom_surface (gdk_window);
 
   background->surface = gdk_wayland_window_get_wl_surface (gdk_window);
+	desktop_shell_set_grab_surface(desktop->shell, background->surface);	// Important!!
   desktop_shell_set_user_data (desktop->shell, desktop);
   desktop_shell_set_background (desktop->shell, desktop->output,
       background->surface);
@@ -649,6 +736,7 @@ pointer_handle_button (void *data,
 {
   struct desktop *desktop = data;
 
+printf("pointer_handle_button\n");
   if (state_w != WL_POINTER_BUTTON_STATE_RELEASED)
     return;
 

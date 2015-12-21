@@ -1,38 +1,21 @@
 #! /bin/sh
+#	©2014 YUICHIRO NAKADA
 
-PREFIX=@prefix@
-LIBEXECDIR=$PREFIX/libexec
-ABS_BUILDDIR=@abs_builddir@
+export WAYLAND_DISPLAY="wayland-0"
+export GDK_BACKEND=wayland CLUTTER_BACKEND=wayland
+export GTK_IM_MODULE="bim"
+export QT_IM_MODULE="bim"
 
-md5() {
-    cat "$1" 2> /dev/null | md5sum
-}
+PREFIX=/usr
 
-check_install() {
-    local_maynard="$ABS_BUILDDIR/shell/maynard"
-    installed_maynard="$LIBEXECDIR/maynard"
-    if [ ! -e "$local_maynard" -o \
-         ! -e "$installed_maynard" -o \
-         "`md5 \"$local_maynard\"`" != "`md5 \"$installed_maynard\"`" ]; then
-        echo "It looks like you forgot to run 'make install'." >&2
-        exit 1
-    fi
-}
-
-mkdir ~/.config > /dev/null 2>&1
+[ -n "$1" ] && opt="-u $1"
 
 xdpyinfo > /dev/null 2>&1
 if [ "$?" = "0" ]; then
-    # We are running under X, so let's assume this is a development
-    # installation.
-    if ! cat /etc/os-release 2> /dev/null | grep 'ID=raspbian' > /dev/null; then
-        # Non-Raspbian, we can launch weston under X.
-        check_install
-        XDG_DATA_DIRS=$XDG_DATA_DIRS:$PREFIX/share/ $PREFIX/bin/weston
-    else
-        echo "You cannot run Maynard under X." >&2
-        exit 1
-    fi
+	# We are running under X, so let's assume this is a development installation.
+	XDG_DATA_DIRS=$XDG_DATA_DIRS:$PREFIX/share/ $PREFIX/bin/weston
 else
-    weston-launch
+	weston-launch ${opt} || weston-launch ${opt} -- --backend=fbdev-backend.so
+	#weston
 fi
+
