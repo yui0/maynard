@@ -17,19 +17,17 @@ typedef struct _ShellAppSystem ShellAppSystem;
 typedef struct _ShellAppSystemClass ShellAppSystemClass;
 typedef struct _ShellAppSystemPrivate ShellAppSystemPrivate;
 
-struct _ShellAppSystem
-{
-  GObject parent;
+struct _ShellAppSystem {
+	GObject parent;
 
-  ShellAppSystemPrivate *priv;
+	ShellAppSystemPrivate *priv;
 };
 
-struct _ShellAppSystemClass
-{
-  GObjectClass parent_class;
+struct _ShellAppSystemClass {
+	GObjectClass parent_class;
 
-  void (*installed_changed)(ShellAppSystem *appsys, gpointer user_data);
-  void (*favorites_changed)(ShellAppSystem *appsys, gpointer user_data);
+	void (*installed_changed)(ShellAppSystem *appsys, gpointer user_data);
+	void (*favorites_changed)(ShellAppSystem *appsys, gpointer user_data);
 };
 
 GType           shell_app_system_get_type    (void) G_GNUC_CONST;

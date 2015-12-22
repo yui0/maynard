@@ -1,5 +1,5 @@
-%define version   0.3
-%define release   b2
+%define version   0.4
+%define release   b1
 
 Name:		maynard
 Summary:	A desktop shell client for Weston

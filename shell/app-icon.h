@@ -35,16 +35,14 @@ typedef struct MaynardAppIcon MaynardAppIcon;
 typedef struct MaynardAppIconClass MaynardAppIconClass;
 typedef struct MaynardAppIconPrivate MaynardAppIconPrivate;
 
-struct MaynardAppIcon
-{
-  GtkButton parent;
+struct MaynardAppIcon {
+	GtkButton parent;
 
-  MaynardAppIconPrivate *priv;
+	MaynardAppIconPrivate *priv;
 };
 
-struct MaynardAppIconClass
-{
-  GtkButtonClass parent_class;
+struct MaynardAppIconClass {
+	GtkButtonClass parent_class;
 };
 
 GType      maynard_app_icon_get_type       (void) G_GNUC_CONST;
