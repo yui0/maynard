@@ -52,17 +52,12 @@ struct MaynardClockPrivate {
 
 G_DEFINE_TYPE(MaynardClock, maynard_clock, GTK_TYPE_WINDOW)
 
-static void
-maynard_clock_init (MaynardClock *self)
+static void maynard_clock_init(MaynardClock *self)
 {
-	self->priv = G_TYPE_INSTANCE_GET_PRIVATE (self,
-	                MAYNARD_CLOCK_TYPE,
-	                MaynardClockPrivate);
+	self->priv = G_TYPE_INSTANCE_GET_PRIVATE(self, MAYNARD_CLOCK_TYPE, MaynardClockPrivate);
 }
 
-static gdouble
-alsa_volume_to_percentage (MaynardClock *self,
-                           glong value)
+static gdouble alsa_volume_to_percentage(MaynardClock *self, glong value)
 {
 	glong range;
 
@@ -74,9 +69,7 @@ alsa_volume_to_percentage (MaynardClock *self,
 	return (value / (gdouble) range) * 100;
 }
 
-static glong
-percentage_to_alsa_volume (MaynardClock *self,
-                           gdouble value)
+static glong percentage_to_alsa_volume(MaynardClock *self, gdouble value)
 {
 	glong range;
 
@@ -86,9 +79,7 @@ percentage_to_alsa_volume (MaynardClock *self,
 	return (range * value / 100) + self->priv->min_volume;
 }
 
-static void
-volume_changed_cb (GtkRange *range,
-                   MaynardClock *self)
+static void volume_changed_cb(GtkRange *range, MaynardClock *self)
 {
 	gdouble value;
 	const gchar *icon_name;
@@ -177,22 +168,21 @@ create_volume_box (MaynardClock *self)
 }
 
 static void
-wall_clock_notify_cb (GnomeWallClock *wall_clock,
-                      GParamSpec *pspec,
-                      MaynardClock *self)
+wall_clock_notify_cb(GnomeWallClock *wall_clock, GParamSpec *pspec, MaynardClock *self)
 {
 	GDateTime *datetime;
 	gchar *str;
 
-	datetime = g_date_time_new_now_local ();
+	datetime = g_date_time_new_now_local();
 
-	str = g_date_time_format (datetime,
-	                          "<span font=\"Droid Sans 32\">%H:%M</span>\n"
-	                          "<span font=\"Droid Sans 12\">%d/%m/%Y</span>");
-	gtk_label_set_markup (GTK_LABEL (self->priv->label), str);
+	str = g_date_time_format(datetime,
+		"<span font=\"Droid Sans 32\">%H:%M</span>\n"
+//		"<span font=\"Droid Sans 12\">%d/%m/%Y</span>");
+		"<span font=\"Droid Sans 12\">%F(%a)</span>");
+	gtk_label_set_markup(GTK_LABEL(self->priv->label), str);
 
-	g_free (str);
-	g_date_time_unref (datetime);
+	g_free(str);
+	g_date_time_unref(datetime);
 }
 
 static void
@@ -277,10 +267,10 @@ maynard_clock_constructed (GObject *object)
 	/* volume */
 	self->priv->revealer_volume = gtk_revealer_new ();
 	gtk_revealer_set_transition_type (
-	        GTK_REVEALER (self->priv->revealer_volume),
+	        GTK_REVEALER(self->priv->revealer_volume),
 	        GTK_REVEALER_TRANSITION_TYPE_SLIDE_RIGHT);
-	gtk_revealer_set_reveal_child (
-	        GTK_REVEALER (self->priv->revealer_volume), FALSE);
+	gtk_revealer_set_reveal_child(
+	        GTK_REVEALER(self->priv->revealer_volume), FALSE);
 	gtk_box_pack_start (GTK_BOX (box), self->priv->revealer_volume,
 	                    TRUE, TRUE, 0);
 
@@ -291,10 +281,10 @@ maynard_clock_constructed (GObject *object)
 	/* system */
 	self->priv->revealer_system = gtk_revealer_new ();
 	gtk_revealer_set_transition_type (
-	        GTK_REVEALER (self->priv->revealer_system),
+	        GTK_REVEALER(self->priv->revealer_system),
 	        GTK_REVEALER_TRANSITION_TYPE_SLIDE_RIGHT);
-	gtk_revealer_set_reveal_child (
-	        GTK_REVEALER (self->priv->revealer_system), FALSE);
+	gtk_revealer_set_reveal_child(
+	        GTK_REVEALER(self->priv->revealer_system), FALSE);
 	gtk_box_pack_start (GTK_BOX (box), self->priv->revealer_system,
 	                    TRUE, TRUE, 0);
 
@@ -305,15 +295,15 @@ maynard_clock_constructed (GObject *object)
 	/* clock */
 	self->priv->revealer_clock = gtk_revealer_new ();
 	gtk_revealer_set_transition_type (
-	        GTK_REVEALER (self->priv->revealer_clock),
+	        GTK_REVEALER(self->priv->revealer_clock),
 	        GTK_REVEALER_TRANSITION_TYPE_SLIDE_LEFT);
-	gtk_revealer_set_reveal_child (
-	        GTK_REVEALER (self->priv->revealer_clock), TRUE);
+	gtk_revealer_set_reveal_child(
+	        GTK_REVEALER(self->priv->revealer_clock), TRUE);
 	gtk_box_pack_start (GTK_BOX (box), self->priv->revealer_clock,
 	                    TRUE, TRUE, 0);
 
 	self->priv->label = gtk_label_new ("");
-	gtk_label_set_justify (GTK_LABEL (self->priv->label), GTK_JUSTIFY_CENTER);
+	gtk_label_set_justify (GTK_LABEL(self->priv->label), GTK_JUSTIFY_CENTER);
 	gtk_container_add (GTK_CONTAINER (self->priv->revealer_clock),
 	                   self->priv->label);
 
@@ -357,26 +347,22 @@ maynard_clock_class_init (MaynardClockClass *klass)
 	g_type_class_add_private (object_class, sizeof (MaynardClockPrivate));
 }
 
-GtkWidget *
-maynard_clock_new (void)
+GtkWidget *maynard_clock_new()
 {
-	return g_object_new (MAYNARD_CLOCK_TYPE,
-	                     NULL);
+	return g_object_new(MAYNARD_CLOCK_TYPE, NULL);
 }
 
-void
-maynard_clock_show_section (MaynardClock *self,
-                            MaynardClockSection section)
+void maynard_clock_show_section(MaynardClock *self, MaynardClockSection section)
 {
-	gtk_revealer_set_reveal_child (
-	        GTK_REVEALER (self->priv->revealer_clock),
+	gtk_revealer_set_reveal_child(
+	        GTK_REVEALER(self->priv->revealer_clock),
 	        section == MAYNARD_CLOCK_SECTION_CLOCK);
 
-	gtk_revealer_set_reveal_child (
-	        GTK_REVEALER (self->priv->revealer_system),
+	gtk_revealer_set_reveal_child(
+	        GTK_REVEALER(self->priv->revealer_system),
 	        section == MAYNARD_CLOCK_SECTION_SYSTEM);
 
-	gtk_revealer_set_reveal_child (
-	        GTK_REVEALER (self->priv->revealer_volume),
+	gtk_revealer_set_reveal_child(
+	        GTK_REVEALER(self->priv->revealer_volume),
 	        section == MAYNARD_CLOCK_SECTION_VOLUME);
 }

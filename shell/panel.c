@@ -67,9 +67,7 @@ widget_enter_notify_event_cb(GtkWidget *widget, GdkEventCrossing *event, Maynard
 	return handled;
 }
 
-static void
-widget_connect_enter_signal(MaynardPanel *self,
-                             GtkWidget *widget)
+static void widget_connect_enter_signal(MaynardPanel *self, GtkWidget *widget)
 {
 	g_signal_connect(widget, "enter-notify-event",
 	                  G_CALLBACK(widget_enter_notify_event_cb), self);
@@ -225,20 +223,20 @@ static void maynard_panel_class_init(MaynardPanelClass *klass)
 	object_class->dispose = maynard_panel_dispose;
 
 	signals[APP_MENU_TOGGLED] = g_signal_new("app-menu-toggled",
-	                            G_TYPE_FROM_CLASS(klass), G_SIGNAL_RUN_LAST, 0, NULL, NULL,
-	                            NULL, G_TYPE_NONE, 0);
+					G_TYPE_FROM_CLASS(klass), G_SIGNAL_RUN_LAST, 0, NULL, NULL,
+					NULL, G_TYPE_NONE, 0);
 
 	signals[SYSTEM_TOGGLED] = g_signal_new("system-toggled",
-	                                        G_TYPE_FROM_CLASS(klass), G_SIGNAL_RUN_LAST, 0, NULL, NULL,
-	                                        NULL, G_TYPE_NONE, 0);
+					G_TYPE_FROM_CLASS(klass), G_SIGNAL_RUN_LAST, 0, NULL, NULL,
+					NULL, G_TYPE_NONE, 0);
 
 	signals[VOLUME_TOGGLED] = g_signal_new("volume-toggled",
-	                                        G_TYPE_FROM_CLASS(klass), G_SIGNAL_RUN_LAST, 0, NULL, NULL,
-	                                        NULL, G_TYPE_NONE, 0);
+					G_TYPE_FROM_CLASS(klass), G_SIGNAL_RUN_LAST, 0, NULL, NULL,
+					NULL, G_TYPE_NONE, 0);
 
 	signals[FAVORITE_LAUNCHED] = g_signal_new("favorite-launched",
-	                             G_TYPE_FROM_CLASS(klass), G_SIGNAL_RUN_LAST, 0, NULL, NULL,
-	                             NULL, G_TYPE_NONE, 0);
+					G_TYPE_FROM_CLASS(klass), G_SIGNAL_RUN_LAST, 0, NULL, NULL,
+					NULL, G_TYPE_NONE, 0);
 
 	g_type_class_add_private(object_class, sizeof(MaynardPanelPrivate));
 }
