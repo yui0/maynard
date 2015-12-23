@@ -77,8 +77,7 @@ static void add_favorite(MaynardFavorites *self, const gchar *favorite)
 	gtk_box_pack_end(GTK_BOX(self), button, FALSE, FALSE, 0);
 }
 
-static void
-remove_favorite(GtkWidget *favorite, gpointer user_data)
+static void remove_favorite(GtkWidget *favorite, gpointer user_data)
 {
 	gtk_widget_destroy(favorite);
 }
@@ -92,7 +91,7 @@ favorites_changed(GSettings *settings, const gchar *key, MaynardFavorites *self)
 	/* Remove all favorites first */
 	gtk_container_foreach(GTK_CONTAINER(self), remove_favorite, NULL);
 
-	for (i = 0; i < g_strv_length(favorites); i++) {
+	for (i=0; i < g_strv_length(favorites); i++) {
 		gchar *fav = favorites[i];
 
 		add_favorite(self, fav);
@@ -114,24 +113,22 @@ static void maynard_favorites_init(MaynardFavorites *self)
 {
 	self->priv = G_TYPE_INSTANCE_GET_PRIVATE(self, MAYNARD_TYPE_FAVORITES, MaynardFavoritesPrivate);
 
-	self->priv->settings = g_settings_new("org.raspberrypi.maynard");
-	g_signal_connect(self->priv->settings, "changed::favorites",
-	                 G_CALLBACK(favorites_changed), self);
+	self->priv->settings = g_settings_new("org.berry.maynard");
+	g_signal_connect(self->priv->settings, "changed::favorites", G_CALLBACK(favorites_changed), self);
 	favorites_changed(self->priv->settings, "favorites", self);
 
 	gtk_orientable_set_orientation(GTK_ORIENTABLE(self), GTK_ORIENTATION_HORIZONTAL);
 }
 
-static void
-maynard_favorites_class_init(MaynardFavoritesClass *klass)
+static void maynard_favorites_class_init(MaynardFavoritesClass *klass)
 {
 	GObjectClass *object_class = (GObjectClass *)klass;
 
 	object_class->dispose = maynard_favorites_dispose;
 
 	signals[APP_LAUNCHED] = g_signal_new("app-launched",
-	                                     G_TYPE_FROM_CLASS(klass), G_SIGNAL_RUN_LAST, 0, NULL, NULL,
-	                                     NULL, G_TYPE_NONE, 0);
+		G_TYPE_FROM_CLASS(klass), G_SIGNAL_RUN_LAST, 0, NULL, NULL,
+		NULL, G_TYPE_NONE, 0);
 
 	g_type_class_add_private(object_class, sizeof(MaynardFavoritesPrivate));
 }

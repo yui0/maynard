@@ -77,13 +77,10 @@ struct desktop {
 	gboolean pointer_out_of_panel;
 };
 
-static gboolean panel_window_enter_cb(GtkWidget *widget,
-                                      GdkEventCrossing *event, struct desktop *desktop);
-static gboolean panel_window_leave_cb(GtkWidget *widget,
-                                      GdkEventCrossing *event, struct desktop *desktop);
+static gboolean panel_window_enter_cb(GtkWidget *widget, GdkEventCrossing *event, struct desktop *desktop);
+static gboolean panel_window_leave_cb(GtkWidget *widget, GdkEventCrossing *event, struct desktop *desktop);
 
-static gboolean
-connect_enter_leave_signals(gpointer data)
+static gboolean connect_enter_leave_signals(gpointer data)
 {
 	struct desktop *desktop = data;
 	GList *l;
@@ -308,8 +305,7 @@ volume_changed_cb(MaynardClock *clock, gdouble value, const gchar *icon_name, st
 	maynard_panel_set_volume_icon_name(MAYNARD_PANEL(desktop->panel->window), icon_name);
 }
 
-static GtkWidget *
-clock_create(struct desktop *desktop)
+static GtkWidget *clock_create(struct desktop *desktop)
 {
 	struct element *clock;
 	GdkWindow *gdk_window;
@@ -332,10 +328,7 @@ clock_create(struct desktop *desktop)
 	desktop->clock = clock;
 }
 
-static void
-button_toggled_cb (struct desktop *desktop,
-                   gboolean *visible,
-                   gboolean *not_visible)
+static void button_toggled_cb(struct desktop *desktop, gboolean *visible, gboolean *not_visible)
 {
 	*visible = !*visible;
 	*not_visible = FALSE;
@@ -485,7 +478,7 @@ panel_create (struct desktop *desktop)
 	panel = malloc(sizeof *panel);
 	memset(panel, 0, sizeof *panel);
 
-	panel->window = maynard_panel_new ();
+	panel->window = maynard_panel_new();
 
 	g_signal_connect(panel->window, "app-menu-toggled",
 	                  G_CALLBACK(launcher_grid_toggle), desktop);
@@ -505,10 +498,9 @@ panel_create (struct desktop *desktop)
 
 	panel->surface = gdk_wayland_window_get_wl_surface(gdk_window);
 	desktop_shell_set_user_data(desktop->shell, desktop);
-	desktop_shell_set_panel (desktop->shell, desktop->output, panel->surface);
-	desktop_shell_set_panel_position (desktop->shell,
-	                                  DESKTOP_SHELL_PANEL_POSITION_LEFT);
-	shell_helper_set_panel (desktop->helper, panel->surface);
+	desktop_shell_set_panel(desktop->shell, desktop->output, panel->surface);
+	desktop_shell_set_panel_position(desktop->shell, DESKTOP_SHELL_PANEL_POSITION_LEFT);
+	shell_helper_set_panel(desktop->helper, panel->surface);
 
 	gtk_widget_show_all(panel->window);
 
@@ -516,15 +508,12 @@ panel_create (struct desktop *desktop)
 }
 
 /* Expose callback for the drawing area */
-static gboolean
-draw_cb (GtkWidget *widget,
-         cairo_t *cr,
-         gpointer data)
+static gboolean draw_cb(GtkWidget *widget, cairo_t *cr, gpointer data)
 {
 	struct desktop *desktop = data;
 
-	gdk_cairo_set_source_pixbuf (cr, desktop->background->pixbuf, 0, 0);
-	cairo_paint (cr);
+	gdk_cairo_set_source_pixbuf(cr, desktop->background->pixbuf, 0, 0);
+	cairo_paint(cr);
 
 	return TRUE;
 }
@@ -535,8 +524,41 @@ static void destroy_cb(GObject *object, gpointer data)
 	gtk_main_quit();
 }
 
-static GdkPixbuf *
-scale_background (GdkPixbuf *original_pixbuf)
+char *exts = ".jpg.JPG.png.PNG";
+int selects(const struct dirent *dir)
+{
+	int *p;
+
+	char a = strlen(dir->d_name);
+	if (a<4) return 0;
+	a -= 4;
+	p = (int*)&(dir->d_name[a]);
+
+	for (int i=0; i<strlen(exts)/4; i++) {
+		if (*p == *((int*)(&exts[i*4]))) return 1;
+	}
+	return 0;
+}
+char *getFile(char *dirname, int c)
+{
+	static char p[256];
+	struct dirent **namelist;
+
+	int r = scandir(dirname, &namelist, selects, alphasort);
+	if (r==-1) return 0;
+
+	strncpy(p, dirname, 255);
+	strncat(p, "/", 255);
+	if (c==-1) c = rand()%r;
+	for (int i=0; i<r; i++) {
+		if (i==c) strncat(p, namelist[i]->d_name, 255);
+		free(namelist[i]);
+	}
+	free(namelist);
+
+	return p;
+}
+static GdkPixbuf *scale_background(GdkPixbuf *original_pixbuf)
 {
 	/* Scale original_pixbuf so it mostly fits on the screen.
 	 * If the aspect ratio is different than a bit on the right or on the
@@ -547,20 +569,19 @@ scale_background (GdkPixbuf *original_pixbuf)
 	gint final_width, final_height;
 	gdouble ratio_horizontal, ratio_vertical, ratio;
 
-	screen_width = gdk_screen_get_width (screen);
-	screen_height = gdk_screen_get_height (screen);
-	original_width = gdk_pixbuf_get_width (original_pixbuf);
-	original_height = gdk_pixbuf_get_height (original_pixbuf);
+	screen_width = gdk_screen_get_width(screen);
+	screen_height = gdk_screen_get_height(screen);
+	original_width = gdk_pixbuf_get_width(original_pixbuf);
+	original_height = gdk_pixbuf_get_height(original_pixbuf);
 
 	ratio_horizontal = (double) screen_width / original_width;
 	ratio_vertical = (double) screen_height / original_height;
-	ratio = MAX (ratio_horizontal, ratio_vertical);
+	ratio = MAX(ratio_horizontal, ratio_vertical);
 
-	final_width = ceil (ratio * original_width);
-	final_height = ceil (ratio * original_height);
+	final_width = ceil(ratio * original_width);
+	final_height = ceil(ratio * original_height);
 
-	return gdk_pixbuf_scale_simple (original_pixbuf,
-	                                final_width, final_height, GDK_INTERP_BILINEAR);
+	return gdk_pixbuf_scale_simple(original_pixbuf, final_width, final_height, GDK_INTERP_BILINEAR);
 }
 
 static void background_create(struct desktop *desktop)
@@ -573,7 +594,10 @@ static void background_create(struct desktop *desktop)
 	background = malloc(sizeof *background);
 	memset(background, 0, sizeof *background);
 
-	filename = g_getenv("BACKGROUND");
+	GSettings *settings = g_settings_new("org.berry.maynard");
+	srand((unsigned)time(NULL));
+	filename = getFile(g_settings_get_string(settings, "background"), -1);
+	//filename = g_getenv("BACKGROUND");
 	if (filename == NULL) {
 		filename = DEFAULT_BACKGROUND;
 	}
@@ -643,7 +667,7 @@ static void css_setup(struct desktop *desktop)
 
 	provider = gtk_css_provider_new();
 
-	file = g_file_new_for_uri("resource:///org/raspberry-pi/maynard/style.css");
+	file = g_file_new_for_uri("resource:///org/berry/maynard/style.css");
 
 	if (!gtk_css_provider_load_from_file(provider, file, &error)) {
 		g_warning("Failed to load CSS file: %s", error->message);
@@ -653,7 +677,7 @@ static void css_setup(struct desktop *desktop)
 	}
 
 	gtk_style_context_add_provider_for_screen(gdk_screen_get_default(),
-	                GTK_STYLE_PROVIDER (provider), 600);
+	                GTK_STYLE_PROVIDER(provider), 600);
 
 	g_object_unref(file);
 }

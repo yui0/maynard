@@ -1,4 +1,4 @@
-gsettings_SCHEMAS = org.raspberrypi.maynard.gschema.xml
+gsettings_SCHEMAS = org.berry.maynard.gschema.xml
 
 @INTLTOOL_XML_NOMERGE_RULE@
 
@@ -16,10 +16,10 @@ gschemas.compiled: $(gsettings_SCHEMAS:.xml=.valid)
 all-local: gschemas.compiled
 
 EXTRA_DIST =						\
-	org.raspberrypi.maynard.gschema.xml.in.in
+	org.berry.maynard.gschema.xml.in.in
 
 CLEANFILES =						\
 	gschemas.compiled				\
-	org.raspberrypi.maynard.gschema.valid	\
+	org.berry.maynard.gschema.valid	\
 	$(gsettings_SCHEMAS)				\
 	$(gsettings_SCHEMAS).in

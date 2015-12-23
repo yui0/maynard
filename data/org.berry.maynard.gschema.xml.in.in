@@ -1,7 +1,8 @@
 <schemalist>
-  <schema id="org.raspberrypi.maynard"
-          path="/org/raspberrypi/maynard/"
+  <schema id="org.berry.maynard"
+          path="/org/berry/maynard/"
           gettext-domain="@GETTEXT_PACKAGE@">
+
     <key name="favorites" type="as">
       <default>[ 'org.gnome.gedit.desktop', 'lxterminal.desktop', 'nautilus.desktop', 'thunderbird.desktop', 'firefox.desktop' ]</default>
       <_summary>List of desktop file IDs for favorite applications</_summary>
@@ -10,6 +11,10 @@
         will be displayed in the panel.
       </_description>
     </key>
+
+    <key name="background" type="s">
+        <default>'/usr/share/wallpapers'</default>
+    </key>
+
   </schema>
 </schemalist>
-
