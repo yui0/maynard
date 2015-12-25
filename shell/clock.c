@@ -171,15 +171,16 @@ wall_clock_notify_cb(GnomeWallClock *wall_clock, GParamSpec *pspec, MaynardClock
 
 	GSettings *settings = g_settings_new("org.berry.maynard");
 	GString *s = g_string_new("<span font=\"");
-	g_string_append_c(s, g_settings_get_string(settings, "date-font1"));
-	g_string_append_c(s, "\">");
-	g_string_append_c(s, g_settings_get_string(settings, "date-format1"));
-	g_string_append_c(s, "</span>\n<span font=\"");
-	g_string_append_c(s, g_settings_get_string(settings, "date-font2"));
-	g_string_append_c(s, "\">");
-	g_string_append_c(s, g_settings_get_string(settings, "date-format2"));
-	g_string_append_c(s, "</span>");
+	g_string_append(s, g_settings_get_string(settings, "date-font1"));
+	g_string_append(s, "\">");
+	g_string_append(s, g_settings_get_string(settings, "date-format1"));
+	g_string_append(s, "</span>\n<span font=\"");
+	g_string_append(s, g_settings_get_string(settings, "date-font2"));
+	g_string_append(s, "\">");
+	g_string_append(s, g_settings_get_string(settings, "date-format2"));
+	g_string_append(s, "</span>");
 	gchar *str = g_date_time_format(datetime, s->str);
+	g_string_free(s, TRUE);
 	g_clear_object(&settings);
 
 /*	gchar *str = g_date_time_format(datetime,
