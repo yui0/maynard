@@ -1,7 +1,7 @@
 #! /bin/sh
-#	©2014 YUICHIRO NAKADA
+#	©2014-2016 YUICHIRO NAKADA
 
-export WAYLAND_DISPLAY="wayland-0"
+#export WAYLAND_DISPLAY="wayland-0"
 export GDK_BACKEND=wayland CLUTTER_BACKEND=wayland
 export GTK_IM_MODULE="bim"
 export QT_IM_MODULE="bim"
@@ -15,7 +15,7 @@ if [ "$?" = "0" ]; then
 	# We are running under X, so let's assume this is a development installation.
 	XDG_DATA_DIRS=$XDG_DATA_DIRS:$PREFIX/share/ $PREFIX/bin/weston
 else
-	weston-launch ${opt} || weston-launch ${opt} -- --backend=fbdev-backend.so
-	#weston
+	#weston-launch ${opt} || weston-launch ${opt} -- --backend=fbdev-backend.so --use-gl
+	exec weston
 fi
 

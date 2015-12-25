@@ -273,8 +273,7 @@ static void launcher_grid_toggle(GtkWidget *widget, struct desktop *desktop)
 	desktop->grid_visible = !desktop->grid_visible;
 }
 
-static void
-launcher_grid_create (struct desktop *desktop)
+static void launcher_grid_create(struct desktop *desktop)
 {
 	struct element *launcher_grid;
 	GdkWindow *gdk_window;
@@ -287,9 +286,7 @@ launcher_grid_create (struct desktop *desktop)
 	launcher_grid->surface = gdk_wayland_window_get_wl_surface(gdk_window);
 
 	gdk_wayland_window_set_use_custom_surface(gdk_window);
-	shell_helper_add_surface_to_layer (desktop->helper,
-	                                   launcher_grid->surface,
-	                                   desktop->panel->surface);
+	shell_helper_add_surface_to_layer(desktop->helper, launcher_grid->surface, desktop->panel->surface);
 
 	g_signal_connect(launcher_grid->window, "app-launched",
 	                  G_CALLBACK(launcher_grid_toggle), desktop);
@@ -351,22 +348,14 @@ static void button_toggled_cb(struct desktop *desktop, gboolean *visible, gboole
 	}
 }
 
-static void
-system_toggled_cb (GtkWidget *widget,
-                   struct desktop *desktop)
+static void system_toggled_cb(GtkWidget *widget, struct desktop *desktop)
 {
-	button_toggled_cb (desktop,
-	                   &desktop->system_visible,
-	                   &desktop->volume_visible);
+	button_toggled_cb(desktop, &desktop->system_visible, &desktop->volume_visible);
 }
 
-static void
-volume_toggled_cb (GtkWidget *widget,
-                   struct desktop *desktop)
+static void volume_toggled_cb(GtkWidget *widget, struct desktop *desktop)
 {
-	button_toggled_cb (desktop,
-	                   &desktop->volume_visible,
-	                   &desktop->system_visible);
+	button_toggled_cb(desktop, &desktop->volume_visible, &desktop->system_visible);
 }
 
 static gboolean
@@ -403,8 +392,7 @@ static gboolean leave_panel_idle_cb(gpointer data)
 
 	desktop->hide_panel_idle_id = 0;
 
-	gtk_window_get_size (GTK_WINDOW(desktop->clock->window),
-	                     &width, NULL);
+	gtk_window_get_size(GTK_WINDOW(desktop->clock->window), &width, NULL);
 
 	shell_helper_slide_surface(desktop->helper,
 	                            desktop->panel->surface,
@@ -424,10 +412,7 @@ static gboolean leave_panel_idle_cb(gpointer data)
 	return G_SOURCE_REMOVE;
 }
 
-static gboolean
-panel_window_leave_cb (GtkWidget *widget,
-                       GdkEventCrossing *event,
-                       struct desktop *desktop)
+static gboolean panel_window_leave_cb(GtkWidget *widget, GdkEventCrossing *event, struct desktop *desktop)
 {
 	if (desktop->initial_panel_timeout_id > 0) {
 		g_source_remove(desktop->initial_panel_timeout_id);
@@ -443,34 +428,30 @@ panel_window_leave_cb (GtkWidget *widget,
 		return TRUE;
 	}
 
-	desktop->hide_panel_idle_id = g_idle_add (leave_panel_idle_cb, desktop);
+	desktop->hide_panel_idle_id = g_idle_add(leave_panel_idle_cb, desktop);
 
 	return FALSE;
 }
 
-static gboolean
-panel_hide_timeout_cb (gpointer data)
+static gboolean panel_hide_timeout_cb(gpointer data)
 {
 	struct desktop *desktop = data;
 
-	panel_window_leave_cb (NULL, NULL, desktop);
+	panel_window_leave_cb(NULL, NULL, desktop);
 
 	return G_SOURCE_REMOVE;
 }
 
-static void
-favorite_launched_cb (MaynardPanel *panel,
-                      struct desktop *desktop)
+static void favorite_launched_cb(MaynardPanel *panel, struct desktop *desktop)
 {
 	if (desktop->grid_visible) {
-		launcher_grid_toggle (desktop->launcher_grid->window, desktop);
+		launcher_grid_toggle(desktop->launcher_grid->window, desktop);
 	}
 
-	panel_window_leave_cb (NULL, NULL, desktop);
+	panel_window_leave_cb(NULL, NULL, desktop);
 }
 
-static void
-panel_create (struct desktop *desktop)
+static void panel_create(struct desktop *desktop)
 {
 	struct element *panel;
 	GdkWindow *gdk_window;
@@ -597,6 +578,7 @@ static void background_create(struct desktop *desktop)
 	GSettings *settings = g_settings_new("org.berry.maynard");
 	srand((unsigned)time(NULL));
 	filename = getFile(g_settings_get_string(settings, "background"), -1);
+	g_clear_object(&settings);
 	//filename = g_getenv("BACKGROUND");
 	if (filename == NULL) {
 		filename = DEFAULT_BACKGROUND;
@@ -738,17 +720,14 @@ static const struct wl_pointer_listener pointer_listener = {
 };
 
 static void
-seat_handle_capabilities(void *data,
-                          struct wl_seat *seat,
-                          enum wl_seat_capability caps)
+seat_handle_capabilities(void *data, struct wl_seat *seat, enum wl_seat_capability caps)
 {
 	struct desktop *desktop = data;
 
 	if ((caps & WL_SEAT_CAPABILITY_POINTER) && !desktop->pointer) {
 		desktop->pointer = wl_seat_get_pointer(seat);
 		wl_pointer_set_user_data(desktop->pointer, desktop);
-		wl_pointer_add_listener(desktop->pointer, &pointer_listener,
-		                        desktop);
+		wl_pointer_add_listener(desktop->pointer, &pointer_listener, desktop);
 	} else if (!(caps & WL_SEAT_CAPABILITY_POINTER) && desktop->pointer) {
 		wl_pointer_destroy(desktop->pointer);
 		desktop->pointer = NULL;
