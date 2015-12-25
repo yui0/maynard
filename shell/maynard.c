@@ -260,8 +260,7 @@ static void launcher_grid_toggle(GtkWidget *widget, struct desktop *desktop)
 	} else {
 		int width;
 
-		gtk_widget_get_size_request(desktop->launcher_grid->window,
-		                             &width, NULL);
+		gtk_widget_get_size_request(desktop->launcher_grid->window, &width, NULL);
 
 		shell_helper_slide_surface(desktop->helper,
 		                            desktop->launcher_grid->surface,

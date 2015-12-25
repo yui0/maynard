@@ -105,64 +105,61 @@ static void volume_changed_cb(GtkRange *range, MaynardClock *self)
 
 	box = gtk_widget_get_parent (self->priv->volume_image);
 	gtk_widget_destroy (self->priv->volume_image);
-	self->priv->volume_image = gtk_image_new_from_icon_name (
+	self->priv->volume_image = gtk_image_new_from_icon_name(
 	                                   icon_name, GTK_ICON_SIZE_LARGE_TOOLBAR);
-	gtk_box_pack_start (GTK_BOX (box), self->priv->volume_image,
+	gtk_box_pack_start(GTK_BOX(box), self->priv->volume_image,
 	                    FALSE, FALSE, 0);
 	gtk_widget_show (self->priv->volume_image);
 
 	g_signal_emit (self, signals[VOLUME_CHANGED], 0, value, icon_name);
 }
 
-static gboolean
-volume_idle_cb (gpointer data)
+static gboolean volume_idle_cb(gpointer data)
 {
-	MaynardClock *self = MAYNARD_CLOCK (data);
+	MaynardClock *self = MAYNARD_CLOCK(data);
 	glong volume;
 
 	if (self->priv->mixer != NULL) {
-		snd_mixer_selem_get_playback_volume (self->priv->mixer,
+		snd_mixer_selem_get_playback_volume(self->priv->mixer,
 		                                     SND_MIXER_SCHN_MONO, &volume);
 
-		gtk_range_set_value (GTK_RANGE (self->priv->volume_scale),
-		                     alsa_volume_to_percentage (self, volume));
+		gtk_range_set_value(GTK_RANGE(self->priv->volume_scale),
+		                     alsa_volume_to_percentage(self, volume));
 	}
 
 	return G_SOURCE_REMOVE;
 }
 
-static GtkWidget *
-create_system_box (MaynardClock *self)
+static GtkWidget *create_system_box(MaynardClock *self)
 {
-	return gtk_label_new ("Not implemented");
+	return gtk_label_new("Not implemented");
 }
 
-static GtkWidget *
-create_volume_box (MaynardClock *self)
+static GtkWidget *create_volume_box(MaynardClock *self)
 {
 	GtkWidget *box;
 
-	box = gtk_box_new (GTK_ORIENTATION_HORIZONTAL, 0);
+	box = gtk_box_new(GTK_ORIENTATION_HORIZONTAL, 0);
 
-	self->priv->volume_image = gtk_image_new_from_icon_name (
+	self->priv->volume_image = gtk_image_new_from_icon_name(
 	                                   "audio-volume-muted-symbolic",
 	                                   GTK_ICON_SIZE_LARGE_TOOLBAR);
-	gtk_box_pack_start (GTK_BOX (box), self->priv->volume_image,
+	gtk_box_pack_start(GTK_BOX(box), self->priv->volume_image,
 	                    FALSE, FALSE, 0);
 
-	self->priv->volume_scale = gtk_scale_new_with_range (
+	self->priv->volume_scale = gtk_scale_new_with_range(
 	                                   GTK_ORIENTATION_HORIZONTAL, 0, 100, 1);
-	gtk_scale_set_draw_value (GTK_SCALE (self->priv->volume_scale), FALSE);
-	gtk_widget_set_size_request (self->priv->volume_scale, 100, -1);
-	gtk_box_pack_end (GTK_BOX (box), self->priv->volume_scale, TRUE, TRUE, 0);
+	gtk_scale_set_draw_value(GTK_SCALE(self->priv->volume_scale), FALSE);
+	gtk_widget_set_size_request(self->priv->volume_scale, 100, -1);
+	gtk_box_pack_end(GTK_BOX(box), self->priv->volume_scale, TRUE, TRUE, 0);
 
-	g_signal_connect (self->priv->volume_scale, "value-changed",
-	                  G_CALLBACK (volume_changed_cb), self);
+	g_signal_connect(self->priv->volume_scale, "value-changed",
+	                  G_CALLBACK(volume_changed_cb), self);
 
 	/* set the initial value in an idle so ::volume-changed is emitted
 	 * when other widgets are connected to the signal and can react
 	 * accordingly. */
-	g_idle_add (volume_idle_cb, self);
+	g_idle_add(volume_idle_cb, self);
 
 	return box;
 }
@@ -252,14 +249,14 @@ error:
 static void
 maynard_clock_constructed (GObject *object)
 {
-	MaynardClock *self = MAYNARD_CLOCK (object);
+	MaynardClock *self = MAYNARD_CLOCK(object);
 	GtkWidget *box, *system_box, *volume_box;
 
 	G_OBJECT_CLASS (maynard_clock_parent_class)->constructed (object);
 
 	self->priv->wall_clock = g_object_new (GNOME_TYPE_WALL_CLOCK, NULL);
-	g_signal_connect (self->priv->wall_clock, "notify::clock",
-	                  G_CALLBACK (wall_clock_notify_cb), self);
+	g_signal_connect(self->priv->wall_clock, "notify::clock",
+	                  G_CALLBACK(wall_clock_notify_cb), self);
 
 	gtk_window_set_title (GTK_WINDOW (self), "maynard");
 	gtk_window_set_decorated (GTK_WINDOW (self), FALSE);
@@ -270,7 +267,7 @@ maynard_clock_constructed (GObject *object)
 	        "maynard-clock");
 
 	/* the box for the revealers */
-	box = gtk_box_new (GTK_ORIENTATION_HORIZONTAL, 0);
+	box = gtk_box_new(GTK_ORIENTATION_HORIZONTAL, 0);
 	gtk_container_add (GTK_CONTAINER (self), box);
 
 	/* volume */
@@ -280,7 +277,7 @@ maynard_clock_constructed (GObject *object)
 	        GTK_REVEALER_TRANSITION_TYPE_SLIDE_RIGHT);
 	gtk_revealer_set_reveal_child(
 	        GTK_REVEALER(self->priv->revealer_volume), FALSE);
-	gtk_box_pack_start (GTK_BOX (box), self->priv->revealer_volume,
+	gtk_box_pack_start(GTK_BOX(box), self->priv->revealer_volume,
 	                    TRUE, TRUE, 0);
 
 	volume_box = create_volume_box (self);
@@ -294,7 +291,7 @@ maynard_clock_constructed (GObject *object)
 	        GTK_REVEALER_TRANSITION_TYPE_SLIDE_RIGHT);
 	gtk_revealer_set_reveal_child(
 	        GTK_REVEALER(self->priv->revealer_system), FALSE);
-	gtk_box_pack_start (GTK_BOX (box), self->priv->revealer_system,
+	gtk_box_pack_start(GTK_BOX(box), self->priv->revealer_system,
 	                    TRUE, TRUE, 0);
 
 	system_box = create_system_box (self);
@@ -308,17 +305,17 @@ maynard_clock_constructed (GObject *object)
 	        GTK_REVEALER_TRANSITION_TYPE_SLIDE_LEFT);
 	gtk_revealer_set_reveal_child(
 	        GTK_REVEALER(self->priv->revealer_clock), TRUE);
-	gtk_box_pack_start (GTK_BOX (box), self->priv->revealer_clock,
+	gtk_box_pack_start(GTK_BOX(box), self->priv->revealer_clock,
 	                    TRUE, TRUE, 0);
 
-	self->priv->label = gtk_label_new ("");
+	self->priv->label = gtk_label_new("");
 	gtk_label_set_justify (GTK_LABEL(self->priv->label), GTK_JUSTIFY_CENTER);
 	gtk_container_add (GTK_CONTAINER (self->priv->revealer_clock),
 	                   self->priv->label);
 
 	/* TODO: work out how to fix the padding properly. this is added to
 	 * fix the broken alignment where the clock appears to the right. */
-	gtk_box_pack_start (GTK_BOX (box), gtk_revealer_new (), TRUE, TRUE, 0);
+	gtk_box_pack_start(GTK_BOX(box), gtk_revealer_new (), TRUE, TRUE, 0);
 
 	setup_mixer (self);
 
@@ -328,7 +325,7 @@ maynard_clock_constructed (GObject *object)
 static void
 maynard_clock_dispose (GObject *object)
 {
-	MaynardClock *self = MAYNARD_CLOCK (object);
+	MaynardClock *self = MAYNARD_CLOCK(object);
 
 	g_clear_object (&self->priv->wall_clock);
 

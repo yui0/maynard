@@ -51,16 +51,14 @@ struct MaynardPanelPrivate {
 
 G_DEFINE_TYPE(MaynardPanel, maynard_panel, GTK_TYPE_WINDOW)
 
-static void
-maynard_panel_init(MaynardPanel *self)
+static void maynard_panel_init(MaynardPanel *self)
 {
 	self->priv = G_TYPE_INSTANCE_GET_PRIVATE(self, MAYNARD_PANEL_TYPE, MaynardPanelPrivate);
 
 	self->priv->volume_icon_name = g_strdup("audio-volume-high-symbolic");
 }
 
-static gboolean
-widget_enter_notify_event_cb(GtkWidget *widget, GdkEventCrossing *event, MaynardPanel *self)
+static gboolean widget_enter_notify_event_cb(GtkWidget *widget, GdkEventCrossing *event, MaynardPanel *self)
 {
 	gboolean handled;
 	g_signal_emit_by_name(self, "enter-notify-event", event, &handled);
