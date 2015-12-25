@@ -170,60 +170,69 @@ create_volume_box (MaynardClock *self)
 static void
 wall_clock_notify_cb(GnomeWallClock *wall_clock, GParamSpec *pspec, MaynardClock *self)
 {
-	GDateTime *datetime;
-	gchar *str;
+	GDateTime *datetime = g_date_time_new_now_local();
 
-	datetime = g_date_time_new_now_local();
+	GSettings *settings = g_settings_new("org.berry.maynard");
+	GString *s = g_string_new("<span font=\"");
+	g_string_append_c(s, g_settings_get_string(settings, "date-font1"));
+	g_string_append_c(s, "\">");
+	g_string_append_c(s, g_settings_get_string(settings, "date-format1"));
+	g_string_append_c(s, "</span>\n<span font=\"");
+	g_string_append_c(s, g_settings_get_string(settings, "date-font2"));
+	g_string_append_c(s, "\">");
+	g_string_append_c(s, g_settings_get_string(settings, "date-format2"));
+	g_string_append_c(s, "</span>");
+	gchar *str = g_date_time_format(datetime, s->str);
+	g_clear_object(&settings);
 
-	str = g_date_time_format(datetime,
+/*	gchar *str = g_date_time_format(datetime,
 		"<span font=\"Droid Sans 32\">%H:%M</span>\n"
 //		"<span font=\"Droid Sans 12\">%d/%m/%Y</span>");
-		"<span font=\"Droid Sans 12\">%F(%a)</span>");
+		"<span font=\"Droid Sans 12\">%F(%a)</span>");*/
 	gtk_label_set_markup(GTK_LABEL(self->priv->label), str);
 
 	g_free(str);
 	g_date_time_unref(datetime);
 }
 
-static void
-setup_mixer (MaynardClock *self)
+static void setup_mixer(MaynardClock *self)
 {
 	snd_mixer_selem_id_t *sid;
 	gint ret;
 
 	/* this is all pretty specific to the rpi */
 
-	if ((ret = snd_mixer_open (&self->priv->mixer_handle, 0)) < 0) {
+	if ((ret = snd_mixer_open(&self->priv->mixer_handle, 0)) < 0) {
 		goto error;
 	}
 
-	if ((ret = snd_mixer_attach (self->priv->mixer_handle, "default")) < 0) {
+	if ((ret = snd_mixer_attach(self->priv->mixer_handle, "default")) < 0) {
 		goto error;
 	}
 
-	if ((ret = snd_mixer_selem_register (self->priv->mixer_handle, NULL, NULL)) < 0) {
+	if ((ret = snd_mixer_selem_register(self->priv->mixer_handle, NULL, NULL)) < 0) {
 		goto error;
 	}
 
-	if ((ret = snd_mixer_load (self->priv->mixer_handle)) < 0) {
+	if ((ret = snd_mixer_load(self->priv->mixer_handle)) < 0) {
 		goto error;
 	}
 
-	snd_mixer_selem_id_alloca (&sid);
-	snd_mixer_selem_id_set_index (sid, 0);
-	snd_mixer_selem_id_set_name (sid, "PCM");
-	self->priv->mixer = snd_mixer_find_selem (self->priv->mixer_handle, sid);
+	snd_mixer_selem_id_alloca(&sid);
+	snd_mixer_selem_id_set_index(sid, 0);
+	snd_mixer_selem_id_set_name(sid, "PCM");
+	self->priv->mixer = snd_mixer_find_selem(self->priv->mixer_handle, sid);
 
 	/* fallback to mixer "Master" */
 	if (self->priv->mixer == NULL) {
-		snd_mixer_selem_id_set_name (sid, "Master");
-		self->priv->mixer = snd_mixer_find_selem (self->priv->mixer_handle, sid);
+		snd_mixer_selem_id_set_name(sid, "Master");
+		self->priv->mixer = snd_mixer_find_selem(self->priv->mixer_handle, sid);
 		if (self->priv->mixer == NULL) {
 			goto error;
 		}
 	}
 
-	if ((ret = snd_mixer_selem_get_playback_volume_range (self->priv->mixer,
+	if ((ret = snd_mixer_selem_get_playback_volume_range(self->priv->mixer,
 	                &self->priv->min_volume, &self->priv->max_volume)) < 0) {
 		goto error;
 	}
@@ -231,10 +240,10 @@ setup_mixer (MaynardClock *self)
 	return;
 
 error:
-	g_debug ("failed to setup mixer: %s", snd_strerror (ret));
+	g_debug("failed to setup mixer: %s", snd_strerror(ret));
 
 	if (self->priv->mixer_handle != NULL) {
-		snd_mixer_close (self->priv->mixer_handle);
+		snd_mixer_close(self->priv->mixer_handle);
 	}
 	self->priv->mixer_handle = NULL;
 	self->priv->mixer = NULL;
