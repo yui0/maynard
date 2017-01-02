@@ -187,10 +187,24 @@ wall_clock_notify_cb (GnomeWallClock *wall_clock,
 
   datetime = g_date_time_new_now_local ();
 
-  str = g_date_time_format (datetime,
+  GSettings *settings = g_settings_new("org.berry.maynard");
+  GString *s = g_string_new("<span font=\"");
+  g_string_append(s, g_settings_get_string(settings, "date-font1"));
+  g_string_append(s, "\">");
+  g_string_append(s, g_settings_get_string(settings, "date-format1"));
+  g_string_append(s, "</span>\n<span font=\"");
+  g_string_append(s, g_settings_get_string(settings, "date-font2"));
+  g_string_append(s, "\">");
+  g_string_append(s, g_settings_get_string(settings, "date-format2"));
+  g_string_append(s, "</span>");
+  str = g_date_time_format(datetime, s->str);
+  g_string_free(s, TRUE);
+  g_clear_object(&settings);
+
+  /*str = g_date_time_format (datetime,
       "<span font=\"Droid Sans 32\">%H:%M</span>\n"
       //"<span font=\"Droid Sans 12\">%d/%m/%Y</span>");
-      "<span font=\"Droid Sans 12\">%F(%a)</span>");
+      "<span font=\"Droid Sans 12\">%F(%a)</span>");*/
   gtk_label_set_markup (GTK_LABEL (self->priv->label), str);
 
   g_free (str);
