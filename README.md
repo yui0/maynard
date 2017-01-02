@@ -6,6 +6,8 @@ on weston-gtk-shell, a project by Tiago Vignatti.
 License information can be found in the LICENSE file in the same
 directory as this README.
 
+![Screenshot](maynard.jpg)
+
 ## Features
 
 - Lightweight and minimalistic
