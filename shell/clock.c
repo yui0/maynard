@@ -189,7 +189,8 @@ wall_clock_notify_cb (GnomeWallClock *wall_clock,
 
   str = g_date_time_format (datetime,
       "<span font=\"Droid Sans 32\">%H:%M</span>\n"
-      "<span font=\"Droid Sans 12\">%d/%m/%Y</span>");
+      //"<span font=\"Droid Sans 12\">%d/%m/%Y</span>");
+      "<span font=\"Droid Sans 12\">%F(%a)</span>");
   gtk_label_set_markup (GTK_LABEL (self->priv->label), str);
 
   g_free (str);

@@ -12,22 +12,5 @@
       </_description>
     </key>
 
-    <key name="background" type="s">
-        <default>'/usr/share/wallpapers'</default>
-    </key>
-
-    <key name="date-font1" type="s">
-        <default>'Droid Sans 32'</default>
-    </key>
-    <key name="date-format1" type="s">
-        <default>'%H:%M'</default>
-    </key>
-    <key name="date-font2" type="s">
-        <default>'Droid Sans 12'</default>
-    </key>
-    <key name="date-format2" type="s">
-        <default>'%F(%a)'</default>
-    </key>
-
   </schema>
 </schemalist>
