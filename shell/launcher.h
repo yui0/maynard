@@ -36,14 +36,16 @@ typedef struct MaynardLauncher MaynardLauncher;
 typedef struct MaynardLauncherClass MaynardLauncherClass;
 typedef struct MaynardLauncherPrivate MaynardLauncherPrivate;
 
-struct MaynardLauncher {
-	GtkWindow parent;
+struct MaynardLauncher
+{
+  GtkWindow parent;
 
-	MaynardLauncherPrivate *priv;
+  MaynardLauncherPrivate *priv;
 };
 
-struct MaynardLauncherClass {
-	GtkWindowClass parent_class;
+struct MaynardLauncherClass
+{
+  GtkWindowClass parent_class;
 };
 
 GType maynard_launcher_get_type (void) G_GNUC_CONST;
@@ -51,7 +53,7 @@ GType maynard_launcher_get_type (void) G_GNUC_CONST;
 GtkWidget * maynard_launcher_new (GtkWidget *background_widget);
 
 void maynard_launcher_calculate (MaynardLauncher *self,
-                                 gint *grid_window_width, gint *grid_window_height,
-                                 gint *grid_cols);
+    gint *grid_window_width, gint *grid_window_height,
+    gint *grid_cols);
 
 #endif /* __MAYNARD_LAUNCHER_H__ */

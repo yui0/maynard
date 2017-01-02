@@ -30,110 +30,131 @@
 #include "app-icon.h"
 
 enum {
-	APP_LAUNCHED,
-	N_SIGNALS
+  APP_LAUNCHED,
+  N_SIGNALS
 };
 static guint signals[N_SIGNALS] = { 0 };
 
 struct MaynardFavoritesPrivate {
-	GSettings *settings;
+  GSettings *settings;
 };
 
 G_DEFINE_TYPE(MaynardFavorites, maynard_favorites, GTK_TYPE_BOX)
 
-static void favorite_clicked(GtkButton *button, MaynardFavorites *self)
+static void
+favorite_clicked (GtkButton *button,
+    MaynardFavorites *self)
 {
-	GAppInfo *info = g_object_get_data(G_OBJECT(button), "info");
-	GError *error = NULL;
+  GAppInfo *info = g_object_get_data (G_OBJECT(button), "info");
+  GError *error = NULL;
 
-	g_app_info_launch(info, NULL, NULL, &error);
-	if (error) {
-		g_warning("Could not launch app %s: %s",
-		          g_app_info_get_name(info),
-		          error->message);
-		g_clear_error(&error);
-	}
+  g_app_info_launch (info, NULL, NULL, &error);
+  if (error)
+    {
+      g_warning ("Could not launch app %s: %s",
+          g_app_info_get_name (info),
+          error->message);
+      g_clear_error (&error);
+    }
 
-	g_signal_emit(self, signals[APP_LAUNCHED], 0);
-}
-
-static void add_favorite(MaynardFavorites *self, const gchar *favorite)
-{
-	GDesktopAppInfo *info;
-	GtkWidget *button, *image;
-	GIcon *icon;
-
-	info = g_desktop_app_info_new(favorite);
-	if (!info) return;
-
-	icon = g_app_info_get_icon(G_APP_INFO(info));
-
-	button = maynard_app_icon_new_from_gicon(icon);
-
-	g_object_set_data_full(G_OBJECT(button), "info", info, g_object_unref);
-
-	g_signal_connect(button, "clicked", G_CALLBACK(favorite_clicked), self);
-
-	gtk_box_pack_end(GTK_BOX(self), button, FALSE, FALSE, 0);
-}
-
-static void remove_favorite(GtkWidget *favorite, gpointer user_data)
-{
-	gtk_widget_destroy(favorite);
+  g_signal_emit (self, signals[APP_LAUNCHED], 0);
 }
 
 static void
-favorites_changed(GSettings *settings, const gchar *key, MaynardFavorites *self)
+add_favorite (MaynardFavorites *self,
+    const gchar *favorite)
 {
-	gchar **favorites = g_settings_get_strv(settings, key);
-	gint i;
+  GDesktopAppInfo *info;
+  GtkWidget *button, *image;
+  GIcon *icon;
 
-	/* Remove all favorites first */
-	gtk_container_foreach(GTK_CONTAINER(self), remove_favorite, NULL);
+  info = g_desktop_app_info_new (favorite);
 
-	for (i=0; i < g_strv_length(favorites); i++) {
-		gchar *fav = favorites[i];
+  if (!info)
+    return;
 
-		add_favorite(self, fav);
-	}
+  icon = g_app_info_get_icon (G_APP_INFO (info));
 
-	g_strfreev(favorites);
+  button = maynard_app_icon_new_from_gicon (icon);
+
+  g_object_set_data_full (G_OBJECT (button), "info", info, g_object_unref);
+
+  g_signal_connect (button, "clicked", G_CALLBACK (favorite_clicked), self);
+
+  gtk_box_pack_end (GTK_BOX (self), button, FALSE, FALSE, 0);
 }
 
-static void maynard_favorites_dispose(GObject *object)
+static void
+remove_favorite (GtkWidget *favorite,
+    gpointer user_data)
 {
-	MaynardFavorites *self = MAYNARD_FAVORITES(object);
-
-	g_clear_object(&self->priv->settings);
-
-	G_OBJECT_CLASS(maynard_favorites_parent_class)->dispose(object);
+  gtk_widget_destroy (favorite);
 }
 
-static void maynard_favorites_init(MaynardFavorites *self)
+static void
+favorites_changed (GSettings *settings,
+    const gchar *key,
+    MaynardFavorites *self)
 {
-	self->priv = G_TYPE_INSTANCE_GET_PRIVATE(self, MAYNARD_TYPE_FAVORITES, MaynardFavoritesPrivate);
+  gchar **favorites = g_settings_get_strv (settings, key);
+  gint i;
 
-	self->priv->settings = g_settings_new("org.berry.maynard");
-	g_signal_connect(self->priv->settings, "changed::favorites", G_CALLBACK(favorites_changed), self);
-	favorites_changed(self->priv->settings, "favorites", self);
+  /* Remove all favorites first */
+  gtk_container_foreach (GTK_CONTAINER (self), remove_favorite, NULL);
 
-	gtk_orientable_set_orientation(GTK_ORIENTABLE(self), GTK_ORIENTATION_HORIZONTAL);
+  for (i = 0; i < g_strv_length (favorites); i++)
+    {
+      gchar *fav = favorites[i];
+
+      add_favorite (self, fav);
+    }
+
+  g_strfreev (favorites);
 }
 
-static void maynard_favorites_class_init(MaynardFavoritesClass *klass)
+static void
+maynard_favorites_dispose (GObject *object)
 {
-	GObjectClass *object_class = (GObjectClass *)klass;
+  MaynardFavorites *self = MAYNARD_FAVORITES (object);
 
-	object_class->dispose = maynard_favorites_dispose;
+  g_clear_object (&self->priv->settings);
 
-	signals[APP_LAUNCHED] = g_signal_new("app-launched",
-		G_TYPE_FROM_CLASS(klass), G_SIGNAL_RUN_LAST, 0, NULL, NULL,
-		NULL, G_TYPE_NONE, 0);
-
-	g_type_class_add_private(object_class, sizeof(MaynardFavoritesPrivate));
+  G_OBJECT_CLASS (maynard_favorites_parent_class)->dispose (object);
 }
 
-GtkWidget *maynard_favorites_new()
+static void
+maynard_favorites_init (MaynardFavorites *self)
 {
-	return g_object_new(MAYNARD_TYPE_FAVORITES, "orientation", GTK_ORIENTATION_VERTICAL, NULL);
+  self->priv = G_TYPE_INSTANCE_GET_PRIVATE (self,
+                                            MAYNARD_TYPE_FAVORITES,
+                                            MaynardFavoritesPrivate);
+
+  self->priv->settings = g_settings_new ("org.raspberrypi.maynard");
+  g_signal_connect (self->priv->settings, "changed::favorites",
+                    G_CALLBACK (favorites_changed), self);
+  favorites_changed (self->priv->settings, "favorites", self);
+
+  gtk_orientable_set_orientation (GTK_ORIENTABLE (self), GTK_ORIENTATION_HORIZONTAL);
+}
+
+static void
+maynard_favorites_class_init (MaynardFavoritesClass *klass)
+{
+  GObjectClass *object_class = (GObjectClass *)klass;
+
+  object_class->dispose = maynard_favorites_dispose;
+
+  signals[APP_LAUNCHED] = g_signal_new ("app-launched",
+      G_TYPE_FROM_CLASS (klass), G_SIGNAL_RUN_LAST, 0, NULL, NULL,
+      NULL, G_TYPE_NONE, 0);
+
+  g_type_class_add_private (object_class, sizeof (MaynardFavoritesPrivate));
+}
+
+GtkWidget *
+maynard_favorites_new (void)
+{
+  return g_object_new (MAYNARD_TYPE_FAVORITES,
+      "orientation", GTK_ORIENTATION_VERTICAL,
+      NULL);
 }

@@ -37,23 +37,25 @@ typedef struct MaynardClock MaynardClock;
 typedef struct MaynardClockClass MaynardClockClass;
 typedef struct MaynardClockPrivate MaynardClockPrivate;
 
-struct MaynardClock {
-	GtkWindow parent;
+struct MaynardClock
+{
+  GtkWindow parent;
 
-	MaynardClockPrivate *priv;
+  MaynardClockPrivate *priv;
 };
 
-struct MaynardClockClass {
-	GtkWindowClass parent_class;
+struct MaynardClockClass
+{
+  GtkWindowClass parent_class;
 };
 
 #define MAYNARD_CLOCK_WIDTH (MAYNARD_PANEL_WIDTH * 2.6)
 #define MAYNARD_CLOCK_HEIGHT (MAYNARD_PANEL_WIDTH * 2)
 
 typedef enum {
-	MAYNARD_CLOCK_SECTION_CLOCK,
-	MAYNARD_CLOCK_SECTION_SYSTEM,
-	MAYNARD_CLOCK_SECTION_VOLUME
+  MAYNARD_CLOCK_SECTION_CLOCK,
+  MAYNARD_CLOCK_SECTION_SYSTEM,
+  MAYNARD_CLOCK_SECTION_VOLUME
 } MaynardClockSection;
 
 GType maynard_clock_get_type (void) G_GNUC_CONST;

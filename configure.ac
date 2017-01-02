@@ -11,7 +11,7 @@ AM_SILENT_RULES([yes])
 # Check for programs
 AC_PROG_CC
 
-#IT_PROG_INTLTOOL([0.40])
+IT_PROG_INTLTOOL([0.40])
 
 GETTEXT_PACKAGE=maynard
 AC_SUBST(GETTEXT_PACKAGE)
@@ -24,22 +24,27 @@ LT_INIT([disable-static])
 
 PKG_PROG_PKG_CONFIG()
 
-#PKG_CHECK_MODULES([GTK], [
-#	wayland-client >= 1.0.2
-#	weston >= 1.3.0
-#	gtk+-3.0 >= 3.10
-#	gtk+-wayland-3.0
-#	libgnome-menu-3.0
-#	gnome-desktop-3.0
-#	alsa
-#])
-PKG_CHECK_MODULES(GTK, gtk+-3.0)
-PKG_CHECK_MODULES(GTK, gtk+-wayland-3.0)
-PKG_CHECK_MODULES(GTK, gnome-desktop-3.0)
+PKG_CHECK_MODULES([GTK], [
+	wayland-client >= 1.0.2
+	weston >= 1.5.91
+	gtk+-3.0 >= 3.10
+	gtk+-wayland-3.0
+	libgnome-menu-3.0
+	gnome-desktop-3.0
+	alsa
+])
+
+PKG_CHECK_MODULES([NEW_WESTON], [
+	weston >= 1.12
+	libweston-1
+	],
+	[AC_DEFINE([HAVE_NEW_WESTON],
+	[1],
+	[Using weston 1.12 or newer])],
+	[AC_MSG_WARN([Not using weston 1.12 or newer])]
+)
 
 GLIB_GSETTINGS
-PKG_CHECK_MODULES([GIO],[gio-2.0])
-IT_PROG_INTLTOOL
 
 WAYLAND_SCANNER_RULES(['$(top_srcdir)/protocol'])
 

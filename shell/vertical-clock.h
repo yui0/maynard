@@ -35,14 +35,16 @@ typedef struct MaynardVerticalClock MaynardVerticalClock;
 typedef struct MaynardVerticalClockClass MaynardVerticalClockClass;
 typedef struct MaynardVerticalClockPrivate MaynardVerticalClockPrivate;
 
-struct MaynardVerticalClock {
-	GtkBox parent;
+struct MaynardVerticalClock
+{
+  GtkBox parent;
 
-	MaynardVerticalClockPrivate *priv;
+  MaynardVerticalClockPrivate *priv;
 };
 
-struct MaynardVerticalClockClass {
-	GtkBoxClass parent_class;
+struct MaynardVerticalClockClass
+{
+  GtkBoxClass parent_class;
 };
 
 #define MAYNARD_VERTICAL_CLOCK_WIDTH 25

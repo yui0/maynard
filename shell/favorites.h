@@ -35,14 +35,16 @@ typedef struct MaynardFavorites MaynardFavorites;
 typedef struct MaynardFavoritesClass MaynardFavoritesClass;
 typedef struct MaynardFavoritesPrivate MaynardFavoritesPrivate;
 
-struct MaynardFavorites {
-	GtkBox parent;
+struct MaynardFavorites
+{
+  GtkBox parent;
 
-	MaynardFavoritesPrivate *priv;
+  MaynardFavoritesPrivate *priv;
 };
 
-struct MaynardFavoritesClass {
-	GtkBoxClass parent_class;
+struct MaynardFavoritesClass
+{
+  GtkBoxClass parent_class;
 };
 
 GType      maynard_favorites_get_type         (void) G_GNUC_CONST;

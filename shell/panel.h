@@ -35,23 +35,25 @@ typedef struct MaynardPanel MaynardPanel;
 typedef struct MaynardPanelClass MaynardPanelClass;
 typedef struct MaynardPanelPrivate MaynardPanelPrivate;
 
-struct MaynardPanel {
-	GtkWindow parent;
+struct MaynardPanel
+{
+  GtkWindow parent;
 
-	MaynardPanelPrivate *priv;
+  MaynardPanelPrivate *priv;
 };
 
-struct MaynardPanelClass {
-	GtkWindowClass parent_class;
+struct MaynardPanelClass
+{
+  GtkWindowClass parent_class;
 };
 
 #define MAYNARD_PANEL_WIDTH 56
 #define MAYNARD_PANEL_HEIGHT_RATIO 0.73
 
 typedef enum {
-	MAYNARD_PANEL_BUTTON_NONE,
-	MAYNARD_PANEL_BUTTON_SYSTEM,
-	MAYNARD_PANEL_BUTTON_VOLUME
+  MAYNARD_PANEL_BUTTON_NONE,
+  MAYNARD_PANEL_BUTTON_SYSTEM,
+  MAYNARD_PANEL_BUTTON_VOLUME
 } MaynardPanelButton;
 
 GType maynard_panel_get_type (void) G_GNUC_CONST;
@@ -63,6 +65,6 @@ void maynard_panel_set_expand (MaynardPanel *self, gboolean expand);
 void maynard_panel_show_previous (MaynardPanel *self, MaynardPanelButton button);
 
 void maynard_panel_set_volume_icon_name (MaynardPanel *self,
-                const gchar *icon_name);
+    const gchar *icon_name);
 
 #endif /* __MAYNARD_PANEL_H__ */
