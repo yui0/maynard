@@ -1,0 +1,33 @@
+<schemalist>
+  <schema id="org.berry.maynard"
+          path="/org/berry/maynard/"
+          gettext-domain="@GETTEXT_PACKAGE@">
+
+    <key name="favorites" type="as">
+      <default>[ 'org.gnome.gedit.desktop', 'lxterminal.desktop', 'pcmanfm.desktop', 'thunderbird.desktop', 'firefox.desktop' ]</default>
+      <_summary>List of desktop file IDs for favorite applications</_summary>
+      <_description>
+        The applications corresponding to these identifiers
+        will be displayed in the panel.
+      </_description>
+    </key>
+
+    <key name="background" type="s">
+        <default>'/usr/share/wallpapers'</default>
+    </key>
+
+    <key name="date-font1" type="s">
+        <default>'Droid Sans 32'</default>
+    </key>
+    <key name="date-format1" type="s">
+        <default>'%H:%M'</default>
+    </key>
+    <key name="date-font2" type="s">
+        <default>'Droid Sans 12'</default>
+    </key>
+    <key name="date-format2" type="s">
+        <default>'%F(%a)'</default>
+    </key>
+
+  </schema>
+</schemalist>
