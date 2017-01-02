@@ -534,6 +534,41 @@ destroy_cb (GObject *object,
   gtk_main_quit ();
 }
 
+char *exts = ".jpg.JPG.png.PNG";
+int selects(const struct dirent *dir)
+{
+	int *p;
+
+	char a = strlen(dir->d_name);
+	if (a<4) return 0;
+	a -= 4;
+	p = (int*)&(dir->d_name[a]);
+
+	for (int i=0; i<strlen(exts)/4; i++) {
+		if (*p == *((int*)(&exts[i*4]))) return 1;
+	}
+	return 0;
+}
+char *getFile(char *dirname, int c)
+{
+	static char p[256];
+	struct dirent **namelist;
+
+	int r = scandir(dirname, &namelist, selects, alphasort);
+	if (r==-1) return 0;
+
+	strncpy(p, dirname, 255);
+	strncat(p, "/", 255);
+	if (c==-1) c = rand()%r;
+	for (int i=0; i<r; i++) {
+		if (i==c) strncat(p, namelist[i]->d_name, 255);
+		free(namelist[i]);
+	}
+	free(namelist);
+
+	return p;
+}
+
 static GdkPixbuf *
 scale_background (GdkPixbuf *original_pixbuf)
 {
@@ -574,7 +609,11 @@ background_create (struct desktop *desktop)
   background = malloc (sizeof *background);
   memset (background, 0, sizeof *background);
 
-  filename = g_getenv ("MAYNARD_BACKGROUND");
+  GSettings *settings = g_settings_new("org.berry.maynard");
+  srand((unsigned)time(NULL));
+  filename = getFile(g_settings_get_string(settings, "background"), -1);
+  g_clear_object(&settings);
+  //filename = g_getenv ("MAYNARD_BACKGROUND");
   if (filename && filename[0] != '\0')
     unscaled_background = gdk_pixbuf_new_from_file (filename, NULL);
   else

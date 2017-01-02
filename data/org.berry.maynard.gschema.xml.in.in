@@ -12,6 +12,10 @@
       </_description>
     </key>
 
+    <key name="background" type="s">
+        <default>'/usr/share/wallpapers'</default>
+    </key>
+
     <key name="date-font1" type="s">
         <default>'Droid Sans 32'</default>
     </key>
