@@ -1,5 +1,5 @@
 %define version   0.5
-%define release   b1
+%define release   b2
 
 Name:		maynard
 Summary:	A desktop shell client for Weston
@@ -13,7 +13,7 @@ BuildRoot:	%{_tmppath}/%{name}-%{version}-%{release}-root
 BuildRequires:	intltool, libtool, alsa-lib-devel, gnome-menus-devel, gsettings-desktop-schemas-devel
 BuildRequires:	gnome-desktop3-devel, libwayland-server-devel, weston-devel
 
-BuildArchitectures: i686
+#BuildArchitectures: i686
 
 
 %description
@@ -25,7 +25,7 @@ A desktop shell client for Weston based on GTK.
 
 %build
 ./autogen.sh
-./configure --prefix=/usr
+./configure --prefix=/usr --libdir=%{_libdir}
 make CC=clang %{?_smp_mflags}
 
 %install

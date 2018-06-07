@@ -36,7 +36,7 @@ PKG_CHECK_MODULES([GTK], [
 
 PKG_CHECK_MODULES([NEW_WESTON], [
 	weston >= 1.12
-	libweston-1
+	libweston-4
 	],
 	[AC_DEFINE([HAVE_NEW_WESTON],
 	[1],

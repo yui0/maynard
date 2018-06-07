@@ -24,7 +24,7 @@
 
 #include "config.h"
 #ifdef HAVE_NEW_WESTON
-#include <libweston-1/compositor.h>
+#include <libweston-4/compositor.h>
 #else
 #include <weston/compositor.h>
 #endif
@@ -491,7 +491,7 @@ helper_destroy(struct wl_listener *listener, void *data)
 }
 
 WL_EXPORT int
-module_init(struct weston_compositor *ec,
+wet_module_init(struct weston_compositor *ec,
 	    int *argc, char *argv[])
 {
 	struct shell_helper *helper;

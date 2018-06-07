@@ -698,7 +698,7 @@ css_setup (struct desktop *desktop)
 
   provider = gtk_css_provider_new ();
 
-  file = g_file_new_for_uri ("resource:///org/raspberry-pi/maynard/style.css");
+  file = g_file_new_for_uri ("resource:///org/berry/maynard/style.css");
 
   if (!gtk_css_provider_load_from_file (provider, file, &error))
     {

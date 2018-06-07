@@ -129,7 +129,7 @@ maynard_favorites_init (MaynardFavorites *self)
                                             MAYNARD_TYPE_FAVORITES,
                                             MaynardFavoritesPrivate);
 
-  self->priv->settings = g_settings_new ("org.raspberrypi.maynard");
+  self->priv->settings = g_settings_new ("org.berry.maynard");
   g_signal_connect (self->priv->settings, "changed::favorites",
                     G_CALLBACK (favorites_changed), self);
   favorites_changed (self->priv->settings, "favorites", self);
